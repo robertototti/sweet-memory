@@ -6,11 +6,16 @@ class GameScene extends Phaser.Scene {
   preload() {
     this.load.image('bg', 'assets/sprites/background.png');
     this.load.image('card', 'assets/sprites/card.png');
+
+    config.cards.forEach(id => {
+      this.load.image(`card${id}`, `assets/sprites/card${id}.png`);
+    });
   };
 
   create() {
     this.createBackground();
     this.createCards();
+    this.openedCard = null;
   };
 
   createBackground() {
@@ -19,16 +24,44 @@ class GameScene extends Phaser.Scene {
 
   createCards() {
     this.cards = [];
-    this.getCardPositions().forEach(el => {
-      this.cards.push(new Card(this, el));
+    const positions = this.getCardPositions();
+    Phaser.Utils.Array.Shuffle(positions);
+
+    config.cards.forEach(id => {
+      for (let i = 0; i < 2; i++) {
+        this.cards.push(new Card(this, id, positions.pop()));
+      }
     });
+
+    this.input.on('gameobjectdown', this.onCardClicked, this);
+  };
+
+  onCardClicked(e, card) {
+    if (card.opened) {
+      return false;
+    }
+
+    if (this.openedCard) {
+      if (this.openedCard.id === card.id) {
+        this.openedCard = null;
+
+      } else {
+        this.openedCard.close();
+        this.openedCard = card;
+      }
+
+    } else {
+      this.openedCard = card;
+    }
+
+    card.open();
   };
 
   getCardPositions() {
     const positions = [];
 
     const {width, height} = this.textures.get('card').getSourceImage();
-    const cardWidth = width + 4, cardHeight = height + 4;
+    const cardWidth = width + 10, cardHeight = height + 10;
 
     const offsetX = (this.sys.game.config.width - cardWidth * config.cols) / 2;
     const offsetY = (this.sys.game.config.height - cardHeight * config.rows) / 2;
