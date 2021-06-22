@@ -17,9 +17,21 @@
       canvas {
           width: 100%;
       }
+
+      @font-face {
+          font-family: 'CurseCasual';
+          src: url("assets/fonts/CurseCasual.ttf");
+      }
+
+      .fontPreload {
+          font-family: 'CourseCasual';
+          position: absolute;
+          left: -100px;
+      }
   </style>
 </head>
 <body>
+<div class="fontPreload">.</div>
 <script src="assets/scripts/phaser.js"></script>
 <script src="assets/scripts/GameScene.js"></script>
 <script src="assets/scripts/Card.js"></script>
