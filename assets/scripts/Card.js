@@ -2,6 +2,7 @@ class Card extends Phaser.GameObjects.Sprite {
   opened = false;
   id;
   scene;
+  position;
 
   constructor(scene, id) {
     super(scene, 0, 0, 'card');
@@ -9,6 +10,23 @@ class Card extends Phaser.GameObjects.Sprite {
     this.id = id;
     this.scene.add.existing(this);
     this.setInteractive();
+  };
+
+  init(position) {
+    this.position = position;
+    this.close();
+    this.setPosition(-this.width, -this.height);
+  };
+
+  move(i, restart) {
+    this.scene.tweens.add({
+      targets: this,
+      x: restart ? config.width + this.width : this.position.x,
+      y: restart ? config.height + this.height : this.position.y,
+      ease: 'Linear',
+      delay: i * 100,
+      duration: 150
+    });
   };
 
   flip() {
@@ -32,7 +50,7 @@ class Card extends Phaser.GameObjects.Sprite {
       ease: 'Linear',
       duration: 150
     });
-  }
+  };
 
   open() {
     this.opened = true;
